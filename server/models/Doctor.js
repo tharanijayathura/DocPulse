@@ -9,6 +9,9 @@ const doctorSchema = new mongoose.Schema({
   nic: String,
   specialty: String,
   registeredDate: { type: Date, default: Date.now },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  contact: { type: String, required: true }
 });
 
 module.exports = mongoose.model('Doctor', doctorSchema);
