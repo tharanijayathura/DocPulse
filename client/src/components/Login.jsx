@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Paper from '@mui/material/Paper';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -23,36 +28,40 @@ const Login = () => {
   };
 
   return (
-    <div className="p-6 max-w-md mx-auto mt-10 bg-white rounded-lg shadow">
-      <h2 className="text-2xl font-bold mb-4">Login</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block mb-1">Email</label>
-          <input
-            type="email"
+    <Box className="min-h-screen flex items-center justify-center">
+      <Paper className="p-6 max-w-md w-full bg-gray-800">
+        <Typography variant="h5" align="center" className="mb-4 text-teal-400">
+          Login
+        </Typography>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <TextField
+            label="Email"
             name="email"
+            type="email"
             value={formData.email}
             onChange={handleChange}
-            className="border p-2 w-full"
+            fullWidth
             required
+            className="bg-gray-700"
+            InputProps={{ className: 'text-white' }}
           />
-        </div>
-        <div className="mb-4">
-          <label className="block mb-1">Password</label>
-          <input
-            type="password"
+          <TextField
+            label="Password"
             name="password"
+            type="password"
             value={formData.password}
             onChange={handleChange}
-            className="border p-2 w-full"
+            fullWidth
             required
+            className="bg-gray-700"
+            InputProps={{ className: 'text-white' }}
           />
-        </div>
-        <button type="submit" className="bg-green-500 text-white p-2 rounded w-full">
-          Login
-        </button>
-      </form>
-    </div>
+          <Button type="submit" variant="contained" color="primary" fullWidth className="bg-teal-600 hover:bg-teal-500">
+            Login
+          </Button>
+        </form>
+      </Paper>
+    </Box>
   );
 };
 

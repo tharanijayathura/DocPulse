@@ -1,85 +1,158 @@
 import { useState } from 'react';
 import axios from 'axios';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import AddIcon from '@mui/icons-material/Add';
+import Paper from '@mui/material/Paper';
 
 const PharmacyReceiptForm = () => {
-  const [medicines, setMedicines] = useState([{ name: '', quantity: 1, price: 0 }]);
+  const [formData, setFormData] = useState({
+    patientName: '',
+    ageGroup: 'adult',
+    medicines: [{ name: '', quantity: 1, price: 0 }],
+    pharmacyCharges: 0,
+  });
+  const [errors, setErrors] = useState({});
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: value ? '' : 'This field is required' }));
+  };
 
   const handleMedicineChange = (index, e) => {
-    const newMedicines = [...medicines];
-    newMedicines[index][e.target.name] = e.target.value;
-    setMedicines(newMedicines);
+    const { name, value } = e.target;
+    setFormData((prev) => {
+      const newMedicines = [...prev.medicines];
+      newMedicines[index] = { ...newMedicines[index], [name]: value };
+      return { ...prev, medicines: newMedicines };
+    });
   };
 
   const addMedicine = () => {
-    setMedicines([...medicines, { name: '', quantity: 1, price: 0 }]);
+    setFormData((prev) => ({
+      ...prev,
+      medicines: [...prev.medicines, { name: '', quantity: 1, price: 0 }],
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Please log in first');
+      return;
+    }
     try {
-      await axios.post('/api/medicine/receipt/pharmacy', { medicines }, {
+      await axios.post('/api/medicine/receipt/pharmacy', formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      alert('Pharmacy receipt created successfully');
+      alert('Receipt created successfully');
+      setFormData({
+        patientName: '',
+        ageGroup: 'adult',
+        medicines: [{ name: '', quantity: 1, price: 0 }],
+        pharmacyCharges: 0,
+      });
     } catch (error) {
-      console.error('Error creating pharmacy receipt:', error);
-      alert('Failed to create pharmacy receipt');
+      console.error('Error creating receipt:', error.response?.data || error.message);
+      alert('Failed to create receipt: ' + (error.response?.data?.message || 'Unknown error'));
     }
   };
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Pharmacy Receipt Form</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {medicines.map((med, index) => (
-          <div key={index} className="border p-4 rounded">
-            <div>
-              <label className="block mb-1">Medicine Name</label>
-              <input
-                type="text"
-                name="name"
-                value={med.name}
-                onChange={(e) => handleMedicineChange(index, e)}
-                className="border p-2 w-full"
-                required
-              />
-            </div>
-            <div>
-              <label className="block mb-1">Quantity</label>
-              <input
-                type="number"
-                name="quantity"
-                value={med.quantity}
-                onChange={(e) => handleMedicineChange(index, e)}
-                className="border p-2 w-full"
-                min="1"
-                required
-              />
-            </div>
-            <div>
-              <label className="block mb-1">Price per Unit</label>
-              <input
-                type="number"
-                name="price"
-                value={med.price}
-                onChange={(e) => handleMedicineChange(index, e)}
-                className="border p-2 w-full"
-                step="0.01"
-                min="0"
-                required
-              />
-            </div>
-          </div>
+    <Box className="p-6">
+      <Typography variant="h4" className="mb-6 text-teal-400">
+        Pharmacy Receipt Form
+      </Typography>
+      <form onSubmit={handleSubmit} className="space-y-4 max-w-2xl mx-auto">
+        <TextField
+          label="Patient Name"
+          name="patientName"
+          value={formData.patientName}
+          onChange={handleChange}
+          fullWidth
+          error={!!errors.patientName}
+          helperText={errors.patientName}
+          required
+          sx={{ backgroundColor: '#2D3748', '& .MuiInputBase-input': { color: 'white' } }}
+        />
+        <Box sx={{ marginY: 2 }}>
+          <Typography variant="body1" className="text-gray-300">Age Group</Typography>
+          <Select
+            name="ageGroup"
+            value={formData.ageGroup}
+            onChange={handleChange}
+            fullWidth
+            sx={{ backgroundColor: '#2D3748', color: 'white' }}
+          >
+            <MenuItem value="adult">Adult</MenuItem>
+            <MenuItem value="child">Child</MenuItem>
+            <MenuItem value="senior">Senior</MenuItem>
+          </Select>
+        </Box>
+        {formData.medicines.map((med, index) => (
+          <Paper key={index} className="p-4 bg-gray-700" elevation={3}>
+            <TextField
+              label="Medicine Name"
+              name="name"
+              value={med.name || ''}
+              onChange={(e) => handleMedicineChange(index, e)}
+              fullWidth
+              margin="normal"
+              required
+              sx={{ backgroundColor: '#4A5568', '& .MuiInputBase-input': { color: 'white' } }}
+            />
+            <TextField
+              label="Quantity"
+              name="quantity"
+              type="number"
+              value={med.quantity || 1}
+              onChange={(e) => handleMedicineChange(index, e)}
+              fullWidth
+              margin="normal"
+              InputProps={{ inputProps: { min: 1 } }}
+              required
+              sx={{ backgroundColor: '#4A5568', '& .MuiInputBase-input': { color: 'white' } }}
+            />
+            <TextField
+              label="Price per Unit"
+              name="price"
+              type="number"
+              value={med.price || 0}
+              onChange={(e) => handleMedicineChange(index, e)}
+              fullWidth
+              margin="normal"
+              InputProps={{ inputProps: { min: 0, step: 0.01 } }}
+              required
+              sx={{ backgroundColor: '#4A5568', '& .MuiInputBase-input': { color: 'white' } }}
+            />
+          </Paper>
         ))}
-        <button type="button" onClick={addMedicine} className="bg-blue-500 text-white p-2 rounded">
-          Add Medicine
-        </button>
-        <button type="submit" className="bg-green-500 text-white p-2 rounded w-full">
+        <IconButton onClick={addMedicine} color="primary" className="bg-teal-600 hover:bg-teal-500">
+          <AddIcon />
+        </IconButton>
+        <TextField
+          label="Pharmacy Charges"
+          name="pharmacyCharges"
+          type="number"
+          value={formData.pharmacyCharges}
+          onChange={handleChange}
+          fullWidth
+          margin="normal"
+          InputProps={{ inputProps: { min: 0, step: 0.01 } }}
+          sx={{ backgroundColor: '#2D3748', '& .MuiInputBase-input': { color: 'white' } }}
+        />
+        <Button type="submit" variant="contained" color="primary" fullWidth className="bg-teal-600 hover:bg-teal-500">
           Submit Receipt
-        </button>
+        </Button>
       </form>
-    </div>
+    </Box>
   );
 };
 

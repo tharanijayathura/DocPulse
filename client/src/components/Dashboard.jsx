@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import Grid from '@mui/material/Grid';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -27,21 +31,41 @@ const Dashboard = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
-      <div className="grid grid-cols-2 gap-4">
-        <div className="bg-white p-4 rounded shadow">
-          <h3 className="text-lg font-semibold">Today’s Receipts</h3>
-          <p className="text-2xl">{stats.todayReceipts}</p>
-        </div>
-        <div className="bg-white p-4 rounded shadow">
-          <h3 className="text-lg font-semibold">Yesterday’s Receipts</h3>
-          <p className="text-2xl">{stats.yesterdayReceipts}</p>
-        </div>
-        <div className="bg-white p-4 rounded shadow">
-          <h3 className="text-lg font-semibold">Total Revenue</h3>
-          <p className="text-2xl">${stats.totalRevenue.toFixed(2)}</p>
-        </div>
-      </div>
+      <Typography variant="h4" className="mb-6 text-teal-400">
+        Dashboard
+      </Typography>
+      <Grid container spacing={3}>
+        <Grid item xs={12} sm={6} md={4}>
+          <Card className="bg-gray-700">
+            <CardContent>
+              <Typography variant="h6" color="textSecondary">
+                Today’s Receipts
+              </Typography>
+              <Typography variant="h4" className="text-teal-300">{stats.todayReceipts}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={4}>
+          <Card className="bg-gray-700">
+            <CardContent>
+              <Typography variant="h6" color="textSecondary">
+                Yesterday’s Receipts
+              </Typography>
+              <Typography variant="h4" className="text-teal-300">{stats.yesterdayReceipts}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={4}>
+          <Card className="bg-gray-700">
+            <CardContent>
+              <Typography variant="h6" color="textSecondary">
+                Total Revenue
+              </Typography>
+              <Typography variant="h4" className="text-teal-300">${stats.totalRevenue.toFixed(2)}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
     </div>
   );
 };

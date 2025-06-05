@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
 
 const Profile = () => {
   const [doctor, setDoctor] = useState(null);
@@ -20,20 +24,24 @@ const Profile = () => {
     fetchProfile();
   }, []);
 
-  if (!doctor) return <div>Loading...</div>;
+  if (!doctor) return <Typography className="p-6 text-gray-300">Loading...</Typography>;
 
   return (
-    <div className="p-6 max-w-xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Profile</h1>
-      <div className="bg-white p-4 rounded shadow">
-        <p><strong>Name:</strong> {doctor.name}</p>
-        <p><strong>Username:</strong> {doctor.username}</p>
-        <p><strong>Email:</strong> {doctor.email}</p>
-        <p><strong>Phone:</strong> {doctor.phone}</p>
-        <p><strong>NIC:</strong> {doctor.nic}</p>
-        <p><strong>Specialty:</strong> {doctor.specialty}</p>
-      </div>
-    </div>
+    <Box className="p-6">
+      <Typography variant="h4" className="mb-6 text-teal-400">
+        Profile
+      </Typography>
+      <Card className="bg-gray-700">
+        <CardContent>
+          <Typography variant="body1"><strong className="text-gray-300">Name:</strong> {doctor.name}</Typography>
+          <Typography variant="body1"><strong className="text-gray-300">Username:</strong> {doctor.username}</Typography>
+          <Typography variant="body1"><strong className="text-gray-300">Email:</strong> {doctor.email}</Typography>
+          <Typography variant="body1"><strong className="text-gray-300">Phone:</strong> {doctor.phone}</Typography>
+          <Typography variant="body1"><strong className="text-gray-300">NIC:</strong> {doctor.nic}</Typography>
+          <Typography variant="body1"><strong className="text-gray-300">Specialty:</strong> {doctor.specialty}</Typography>
+        </CardContent>
+      </Card>
+    </Box>
   );
 };
 
